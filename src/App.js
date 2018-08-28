@@ -27,14 +27,15 @@ class App extends Component {
 
   componentDidMount() {
 
-    var margin = { left: 40, right: 20, top: 20, bottom: 40 };
+    var margin = { left: 40, right: 40, top: 40, bottom: 40 };
     var width = 600 - margin.left - margin.right;
     var height = 400 - margin.top - margin.bottom;
 
     var svg = d3.select('#chart-cotainer')
       .append('svg')
       .attr('height', height + margin.top + margin.bottom)
-      .attr('width', width + margin.left + margin.right);
+      .attr('width', width + margin.left + margin.right)
+      .attr('style', 'background: #222;');
 
     var g = svg.append('g')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
@@ -60,6 +61,7 @@ class App extends Component {
       g.append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0, ' + y(0) + ')')
+        .attr('style', 'color: #777;')
         .call(xAxisCall)
         .selectAll('text')
         .attr('y', (item) => {
@@ -80,6 +82,7 @@ class App extends Component {
 
       g.append('g')
         .attr('class', 'y-axis')
+        .attr('style', 'color: #777;')
         .call(yAxisCall);
 
       var rects = g.selectAll('rect')
@@ -100,8 +103,42 @@ class App extends Component {
           // return height - y(d.rallylength);
         })
         .attr('width', x.bandwidth)
-        .attr('fill', 'grey');
-      // .attr('fill', 'transparent');
+        .attr('fill', item => {
+          if (item.rallylength > 0) {
+            return 'yellow';
+          }
+          return 'grey';
+        })
+        .attr('class', item => {
+          return item.serveclass;
+        });
+
+      var rects = g.selectAll('circle')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('cx', (d, i) => {
+          return x(d.point) + (x.bandwidth() / 2);
+        })
+        .attr('cy', (d) => {
+          if (d.rallylength > 0) {
+            return y(d.rallylength) - 20;
+          }
+          return y(0) + Math.abs(y(d.rallylength) - y(0)) + 20;
+        })
+        .attr('r', 13)
+        .attr('fill', item => {
+          if (item.rallylength > 0) {
+            return 'yellow';
+          }
+          return 'grey';
+        })
+        .attr('class', item => {
+          return item.serveclass;
+        });
+
+
+
     }).catch(error => {
       console.log(error);
     });
