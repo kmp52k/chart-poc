@@ -124,14 +124,14 @@ class App extends Component {
           if (d.rallylength > 0) {
             return y(d.rallylength) - 20;
           }
-          return y(0) + Math.abs(y(d.rallylength) - y(0)) + 20;
+          return y(0) + Math.abs(y(d.rallylength) - y(0)) - 20;
         })
         .attr('r', 13)
         .attr('fill', item => {
           if (item.rallylength > 0) {
             return 'yellow';
           }
-          return 'grey';
+          return 'red';
         })
         .attr('class', item => {
           return item.serveclass;
