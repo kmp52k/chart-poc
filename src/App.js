@@ -27,6 +27,7 @@ class App extends Component {
     this.xAxisGroup2 = null;
     this.yAxisGroup2 = null;
     this.trans = d3.transition().duration(750);
+    this.zoom = null;
   }
 
   render() {
@@ -48,10 +49,13 @@ class App extends Component {
 
   componentDidMount() {
 
+    this.zoom = d3.zoom().on('zoom', this.zoomHandler);
+
     this.svg = d3.select('#chart-cotainer')
       .append('svg')
       .attr('height', this.height + this.margin.top + this.margin.bottom)
-      .attr('width', this.width + this.margin.left + this.margin.right);
+      .attr('width', this.width + this.margin.left + this.margin.right)
+      .call(this.zoom).append('g');
     // .attr('style', 'background: #222;');
 
     this.group1 = this.svg.append('g')
@@ -246,6 +250,11 @@ class App extends Component {
         return this.yScale(0) + Math.abs(this.yScale(d.rallylength) - this.yScale(0)) - 20;
       })
       .attr('r', 13);
+  }
+
+  zoomHandler = (event) => {
+    console.log(event, d3.event.transform);
+    this.svg.attr('transform', d3.event.transform);
   }
 }
 
