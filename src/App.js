@@ -4,6 +4,7 @@ import MatchChart from './MatchChart';
 import Amchart from './AmChart';
 
 import * as d3 from "d3";
+// import * as d3Tip from 'd3-tip';
 
 import './App.css';
 
@@ -28,6 +29,7 @@ class App extends Component {
     this.yAxisGroup2 = null;
     this.trans = d3.transition().duration(750);
     this.zoom = null;
+    this.tip = null; //tooltip
   }
 
   render() {
@@ -57,6 +59,10 @@ class App extends Component {
       .attr('width', this.width + this.margin.left + this.margin.right)
       .call(this.zoom).append('g');
     // .attr('style', 'background: #222;');
+
+    this.tip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
 
     this.group1 = this.svg.append('g')
       .attr('transform', 'translate(' + this.margin.left + ', ' + this.margin.top + ')');
@@ -196,6 +202,19 @@ class App extends Component {
       })
       .attr('class', item => {
         return item.serveclass;
+      })
+      .on("mouseover", (d) => {
+        this.tip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        this.tip.html('<span>'+JSON.stringify(d)+'</span>')
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", (d) => {
+        this.tip.transition()
+          .duration(500)
+          .style("opacity", 0);
       })
       .merge(rects)
       .transition(this.trans)
